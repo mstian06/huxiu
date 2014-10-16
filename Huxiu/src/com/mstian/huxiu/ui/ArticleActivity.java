@@ -5,14 +5,19 @@
  */
 package com.mstian.huxiu.ui;
 
+import android.app.ActionBar;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.TextureView;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +37,8 @@ import java.text.SimpleDateFormat;
 public class ArticleActivity extends FragmentActivity{
     
     private WebView mWebView;
-    private Articles mArticles;
+//    private Articles mArticles;
+    private String mArticleUrl;
     
     private TextView mArticleTitle;
     private TextView mArticleAuthor;
@@ -50,18 +56,54 @@ public class ArticleActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.activity_atricle);
-        mWebView = (WebView)findViewById(R.id.webview);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+        
         mArticleTitle = (TextView)findViewById(R.id.article_title);
         mArticleAuthor = (TextView)findViewById(R.id.article_author);
         mArticleDate = (TextView)findViewById(R.id.article_date);
         mArticleCommentCount = (TextView)findViewById(R.id.article_commentcount);
+        
+        mWebView = (WebView)findViewById(R.id.webview);
+        mWebView.setWebViewClient( new WebViewClient() {
+            
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    
+                    int article_id = -1;
+                    String[] partStrings = url.split("/");
+                    if (partStrings != null && partStrings.length > 0) {
+                        for (int i = 1; i < partStrings.length; i++) {
+                            if (partStrings[i-1].equals("article")) {
+                                article_id = Integer.valueOf(partStrings[i]);
+                            }
+                        }
+                    }
+                    
+                    if (article_id == -1) {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(url));
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(ArticleActivity.this, ArticleActivity.class);
+                        intent.putExtra("url", HuxiuApi.getArticleDetialUrlString(article_id));
+                        startActivity(intent);
+                    }
+
+                    return true;
+                };
+            }
+        );
         
 //        WindowManager windowManager = getWindowManager();    
 //        Display display = windowManager.getDefaultDisplay();    
 //        mScreenWidth = display.getWidth();
 //        mScreenHeight = display.getHeight();
         
-        mArticles = (Articles)getIntent().getSerializableExtra("article");
+        mArticleUrl = (String)getIntent().getStringExtra("url");
         loadData();
     }
     
@@ -72,7 +114,7 @@ public class ArticleActivity extends FragmentActivity{
     }
     
     private void loadData() {
-        RequestManager.addRequest(new GsonRequest<ArticleDetialRequestData>(HuxiuApi.getArticleDetialUrlString(mArticles.getAid()), ArticleDetialRequestData.class, null,
+        RequestManager.addRequest(new GsonRequest<ArticleDetialRequestData>(mArticleUrl, ArticleDetialRequestData.class, null,
                 new Response.Listener<ArticleDetialRequestData>() {
             @Override
             public void onResponse(final ArticleDetialRequestData response) {
@@ -113,5 +155,17 @@ public class ArticleActivity extends FragmentActivity{
         webSettings.setDefaultTextEncodingName("UTF -8");//设置默认为utf-8
         String contentString = WEB_STYLE + articles.getContent();
         mWebView.loadData(contentString, "text/html; charset=UTF-8", null);//这种写法可以正确解码
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        if(item.getItemId() == android.R.id.home)
+        {
+            finish();
+            return true;
+        }
+        
+        return super.onOptionsItemSelected(item);
     }
 }

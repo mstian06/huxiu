@@ -51,7 +51,8 @@ LoaderManager.LoaderCallbacks<Cursor> {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Articles article = (Articles) getAdapter().getItem(position - mListView.getHeaderViewsCount());
                 Intent intent = new Intent(getActivity(), ArticleActivity.class);
-                intent.putExtra("article", article);
+//                intent.putExtra("article", article);
+                intent.putExtra("url", HuxiuApi.getArticleDetialUrlString(article.getAid()));
                 startActivity(intent);
             }
         });
