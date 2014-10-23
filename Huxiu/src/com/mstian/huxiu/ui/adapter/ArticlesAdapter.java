@@ -66,10 +66,6 @@ public class ArticlesAdapter extends CursorAdapter{
             holder.imageRequest.cancelRequest();
         }
 
-        if (holder.avartarRequest != null) {
-            holder.avartarRequest.cancelRequest();
-        }
-
         view.setEnabled(!mListView.isItemChecked(cursor.getPosition()
                 + mListView.getHeaderViewsCount()));
 
@@ -111,8 +107,6 @@ public class ArticlesAdapter extends CursorAdapter{
         public TextView time;
 
         public ImageLoader.ImageContainer imageRequest;
-
-        public ImageLoader.ImageContainer avartarRequest;
 
         public Holder(View view) {
             image = (ImageView) view.findViewById(R.id.image);

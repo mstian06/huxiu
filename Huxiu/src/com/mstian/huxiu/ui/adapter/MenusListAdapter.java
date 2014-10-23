@@ -5,17 +5,21 @@
  */
 package com.mstian.huxiu.ui.adapter;
 
+import android.graphics.LinearGradient;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mstian.huxiu.R;
 import com.mstian.huxiu.bean.Menus;
 import com.mstian.huxiu.bean.Menus.MenusRequestData;
+import com.mstian.huxiu.data.RequestManager;
 import com.mstian.huxiu.ui.fragment.MenusListFragment;
 
 public class MenusListAdapter extends BaseAdapter{
@@ -73,7 +77,20 @@ public class MenusListAdapter extends BaseAdapter{
         }
         TextView textView = (TextView) convertView.findViewById(R.id.textView);
         textView.setText(getItem(position).getName());
-        textView.setSelected(mListView.isItemChecked(position));
+//        textView.setSelected(mListView.isItemChecked(position));
+        
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.imgMenu);
+        if (mListView.isItemChecked(position)) {
+            RequestManager.loadImage(getItem(position).getIcon_dark(), RequestManager
+                    .getImageListener(imageView, null, null));
+        } else {
+            RequestManager.loadImage(getItem(position).getIcon_light(), RequestManager
+                    .getImageListener(imageView, null, null));
+        }
+        
+        LinearLayout itemMenu = (LinearLayout) convertView.findViewById(R.id.itemMenu);
+        itemMenu.setSelected(mListView.isItemChecked(position));
+        
         return convertView;
     }
 
