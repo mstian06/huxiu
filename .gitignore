@@ -25,5 +25,17 @@ proguard/
 # Log Files
 *.log
 
+
+######optional
 # Draft
 draft/
+# Eclipse project files
+.classpath
+.project
+.settings/
+.DS_Store
+.idea/
+*.keystore
+out/
+*.iml
+local.properties

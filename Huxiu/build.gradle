@@ -1,12 +1,41 @@
-apply plugin: 'android-library'
+apply plugin: 'android'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
+    compile project(':extras:ActionBar-PullToRefresh')
+    compile project(':extras:ListViewAnimationLib')
 }
 
 android {
-    compileSdkVersion 17
+    compileSdkVersion 14
     buildToolsVersion "21.1.1"
+
+    signingConfigs {
+        debug {
+            keyAlias 'huxiu.keystore'
+            keyPassword 'huxiudev'
+            storeFile file('../huxiu.keystore')
+            storePassword 'huxiudev'
+        }
+        release {
+            keyAlias 'huxiu.keystore'
+            keyPassword 'huxiudev'
+            storeFile file('../huxiu.keystore')
+            storePassword 'huxiudev'
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            signingConfig signingConfigs.debug
+        }
+        release {
+//            runProguard true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-project.txt')
+            signingConfig signingConfigs.release
+        }
+    }
 
     sourceSets {
         main {
