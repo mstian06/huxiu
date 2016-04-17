@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
@@ -10,30 +10,36 @@ android {
     compileSdkVersion 14
     buildToolsVersion "21.1.1"
 
+    defaultConfig {
+        applicationId 'com.mstian.huxiu'
+        minSdkVersion 14
+        targetSdkVersion 16
+    }
+
     signingConfigs {
         debug {
-            keyAlias 'huxiu.keystore'
-            keyPassword 'huxiudev'
             storeFile file('../huxiu.keystore')
             storePassword 'huxiudev'
+            keyAlias 'huxiu.keystore'
+            keyPassword 'huxiudev'
         }
         release {
-            keyAlias 'huxiu.keystore'
-            keyPassword 'huxiudev'
             storeFile file('../huxiu.keystore')
             storePassword 'huxiudev'
+            keyAlias 'huxiu.keystore'
+            keyPassword 'huxiudev'
         }
     }
 
     buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+            signingConfig signingConfigs.release
+        }
         debug {
             debuggable true
             signingConfig signingConfigs.debug
-        }
-        release {
-//            runProguard true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-project.txt')
-            signingConfig signingConfigs.release
         }
     }
 
@@ -59,5 +65,12 @@ android {
         // by a similar customization.
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
+    }
+
+//    // 移除lint检查的error
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+        checkReleaseBuilds false
     }
 }
